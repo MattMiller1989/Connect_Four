@@ -53,7 +53,7 @@ class Game_board
                 #puts "r:#{r} c:#{c}"
                 if @curr_board[r][c]==color
                     dir=find_direction(r,c,color)
-                    puts "r:#{r} c:#{c} dir:#{dir}"
+                    #puts "r:#{r} c:#{c} dir:#{dir}"
                     if dir
                          return true
                     end
@@ -124,31 +124,92 @@ class Game_board
             
             if e.all? {|a| a==color}
                 found =true
-                puts e
+                
             end
         end
 
         return found
 
     end
-        
-        
+    def get_player_choice(is_red)
+        good_choice=false
+        if is_red
+            color='R'
+        else
+            color='B'
+        end
+        while !good_choice
+
+            puts "Pick your move [0-6] to place a #{color} disk"
+            move=gets.chomp
+            good_choice=move.match(/^[0-6]$/)
+        end
+        return move.to_i
+    end
+    def run_game
+        game_over=false
+        is_red=true
+        while !game_over
+            valid_red_move=false
+            while ! valid_red_move
+                choice=get_player_choice(is_red)
+                valid_red_move=add_disk(choice,'R')
+            end
+            if check_for_winner('R')
+                game_over=true
+                declare_winner('R')
+                break
+            end
+            print_board
+            is_red=false
+            valid_blue_move=false
+            while ! valid_blue_move
+                choice=get_player_choice(is_red)
+                valid_blue_move=add_disk(choice,'B')
+            end
+            if check_for_winner('B')
+                game_over=true
+                declare_winner('B')
+                break
+            end
+            print_board
+            is_red=true
+        end
+
+
+    end
+    def print_board
+        @curr_board.each do |n|
+            print n
+            puts
+        end
+    end
+    def declare_winner(color)
+        puts "#{color} HAS WON THE GAME!! DO YOU WANT TO PLAY AGAIN? [y/n]"
+        play_again=gets.chomp
+        if play_again=='y'
+            @curr_board=create_board
+            run_game
+        end
+
+    end       
+       
     
 end
 
 
-board=[[" "," "," "," "," "," "," "],
-                   [" "," "," "," "," "," "," "],
-                   [" "," "," "," "," "," "," "],
-                   [" "," "," "," "," "," "," "],
-                   [" "," "," "," "," "," "," "],
-                   [" "," "," "," "," "," "," "],
-                   [" "," ","R","R","R"," "," "],
-                   ["0","1","2","3","4","5","6"]]
+# board=[[" "," "," "," "," "," "," "],
+#                    [" "," "," "," "," "," "," "],
+#                    [" "," "," "," "," "," "," "],
+#                    [" "," "," "," "," "," "," "],
+#                    [" "," "," "," "," "," "," "],
+#                    [" "," "," "," "," "," "," "],
+#                    [" "," ","R","R","R"," "," "],
+#                    ["0","1","2","3","4","5","6"]]
 
 
- my_board=Game_board.new
- my_board.curr_board=board
+  my_board=Game_board.new
+#  my_board.curr_board=board
 # my_board.add_disk(1,'R')
 # my_board.add_disk(1,'R')
 # my_board.add_disk(1,'R')
@@ -157,4 +218,5 @@ board=[[" "," "," "," "," "," "," "],
 # my_board.add_disk(1,'R')
 
 #  print my_board.curr_board.class
- my_board.check_for_winner('R')
+#  my_board.check_for_winner('R')
+my_board.run_game

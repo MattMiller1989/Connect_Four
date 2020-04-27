@@ -381,9 +381,11 @@ describe Game_board do
                    @test_game.curr_board=board
         expect(@test_game.check_for_winner('B')).to eql false
         end
+        
 
 
     end
+    
 end
 
                 
